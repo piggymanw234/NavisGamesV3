@@ -19,11 +19,7 @@
     text-align: center;
     font-size: 5em;
     color: #ff0000;
-    text-shadow:
-      0 0 10px #ff0000,
-      0 0 20px #ff0000,
-      0 0 40px #ff0000,
-      0 0 80px #ff0000;
+    text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 40px #ff0000, 0 0 80px #ff0000;
     z-index: 10;
   }
 
@@ -47,17 +43,13 @@
     text-decoration: none;
     font-weight: bold;
     font-size: 2em;
-    text-shadow:
-      0 0 10px #ff0000,
-      0 0 20px #ff0000;
+    text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
     transition: all 0.3s ease;
   }
 
   .neon-box a:hover {
     color: #ffffff;
-    text-shadow:
-      0 0 15px #ffffff,
-      0 0 30px #ffffff;
+    text-shadow: 0 0 15px #ffffff, 0 0 30px #ffffff;
   }
 
   canvas {
@@ -87,23 +79,17 @@
     background-color: rgba(0, 0, 0, 0.5);
     color: #fff;
     outline: none;
-    box-shadow:
-      0 0 20px #ff0000,
-      0 0 40px #ff0000 inset,
-      0 0 60px #ff0000;
+    box-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000 inset, 0 0 60px #ff0000;
     transition: all 0.3s ease;
     width: 50%;
   }
 
   .neon-search:focus {
-    box-shadow:
-      0 0 25px #ff0000,
-      0 0 50px #ff0000 inset,
-      0 0 70px #ff0000;
+    box-shadow: 0 0 25px #ff0000, 0 0 50px #ff0000 inset, 0 0 70px #ff0000;
   }
 
   /* Play button */
-  #playMusic {
+  #musicToggle {
     position: fixed;
     bottom: 30px;
     left: 50%;
@@ -115,21 +101,16 @@
     color: #ff0000;
     cursor: pointer;
     border-radius: 10px;
-    box-shadow:
-      0 0 10px #ff0000,
-      0 0 20px #ff0000,
-      0 0 40px #ff0000;
+    box-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 40px #ff0000;
     z-index: 20;
   }
-  #playMusic:hover {
+  #musicToggle:hover {
     color: #fff;
-    box-shadow:
-      0 0 15px #ffffff,
-      0 0 30px #ffffff;
+    box-shadow: 0 0 15px #ffffff, 0 0 30px #ffffff;
   }
 
   /* Hide YouTube iframe */
-  .bg-music {
+  #ytplayer {
     width: 0;
     height: 0;
     border: none;
@@ -143,7 +124,7 @@
 <div class="neon-box">
   <a href="#home">Home</a>
   <a href="#about">About</a>
-  <a href="https://coruscating-blancmange-cfd976.netlify.app" target="_blank" rel="noopener noreferrer">Games</a>
+  <a href="https://coruscating-blancmange-cfd976.netlify.app" target="_blank">Games</a>
   <a href="#contact">Contact</a>
 </div>
 
@@ -153,23 +134,50 @@
   <input type="text" class="neon-search" placeholder="🔎Search...">
 </div>
 
-<!-- Play Music Button -->
-<button id="playMusic">🎵 Play Music</button>
+<!-- Music toggle button -->
+<button id="musicToggle">🎵 Play Music</button>
 
-<!-- Hidden YouTube iframe -->
-<iframe id="ytplayer" class="bg-music"
-  src="https://www.youtube.com/embed/ivPEtR70_Fg?enablejsapi=1&loop=1&playlist=ivPEtR70_Fg"
-  frameborder="0"
-  allow="autoplay">
-</iframe>
+<!-- YouTube API will replace this -->
+<div id="ytplayer"></div>
 
+<!-- Load YouTube API -->
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
-  // Snow falling effect
+  let player;
+  let isPlaying = false;
+
+  // YouTube API ready
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('ytplayer', {
+      height: '0',
+      width: '0',
+      videoId: 'ivPEtR70_Fg',
+      playerVars: {
+        'autoplay': 0,
+        'controls': 0,
+        'loop': 1,
+        'playlist': 'ivPEtR70_Fg'
+      }
+    });
+  }
+
+  // Toggle music
+  document.getElementById("musicToggle").addEventListener("click", function () {
+    if (player && player.playVideo) {
+      if (isPlaying) {
+        player.pauseVideo();
+        this.textContent = "🎵 Play Music";
+      } else {
+        player.playVideo();
+        this.textContent = "⏸ Pause Music";
+      }
+      isPlaying = !isPlaying;
+    }
+  });
+
+  // Snow animation
   const canvas = document.getElementById('snow');
   const ctx = canvas.getContext('2d');
-
-  let particlesArray;
-
   function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -178,9 +186,7 @@
   resizeCanvas();
 
   class Snowflake {
-    constructor() {
-      this.reset();
-    }
+    constructor() { this.reset(); }
     reset() {
       this.x = Math.random() * canvas.width;
       this.y = Math.random() * -canvas.height;
@@ -205,32 +211,15 @@
     }
   }
 
-  function init() {
-    particlesArray = [];
-    for (let i = 0; i < 250; i++) {
-      particlesArray.push(new Snowflake());
-    }
-  }
+  let particlesArray = [];
+  for (let i = 0; i < 250; i++) { particlesArray.push(new Snowflake()); }
 
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let particle of particlesArray) {
-      particle.update();
-      particle.draw();
-    }
+    for (let p of particlesArray) { p.update(); p.draw(); }
     requestAnimationFrame(animate);
   }
-
-  init();
   animate();
-
-  // YouTube player control
-  const playButton = document.getElementById("playMusic");
-  playButton.addEventListener("click", function () {
-    const player = document.getElementById("ytplayer").contentWindow;
-    player.postMessage('{"event":"command","func":"playVideo","args":""}', "*");
-    playButton.style.display = "none";
-  });
 </script>
 
 </body>
