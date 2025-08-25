@@ -109,6 +109,14 @@
       0 0 50px #ff0000 inset,
       0 0 70px #ff0000;
   }
+
+  /* Hide YouTube player but keep audio */
+  .bg-music {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
 </style>
 </head>
 <body>
@@ -130,6 +138,13 @@
 <div class="search-container">
   <input type="text" class="neon-search" placeholder="🔎Search...">
 </div>
+
+<!-- Background Music (YouTube) -->
+<iframe class="bg-music"
+  src="https://www.youtube.com/embed/ivPEtR70_Fg?autoplay=1&loop=1&playlist=ivPEtR70_Fg"
+  frameborder="0"
+  allow="autoplay">
+</iframe>
 
 <script>
   // Snow falling effect
@@ -207,4 +222,3 @@
 
 </body>
 </html>
-
