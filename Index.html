@@ -19,10 +19,11 @@
     text-align: center;
     font-size: 5em;
     color: #ff0000;
-    text-shadow: 0 0 10px #ff0000,
-                 0 0 20px #ff0000,
-                 0 0 40px #ff0000,
-                 0 0 80px #ff0000;
+    text-shadow:
+      0 0 10px #ff0000,
+      0 0 20px #ff0000,
+      0 0 40px #ff0000,
+      0 0 80px #ff0000;
     z-index: 10;
   }
 
@@ -46,15 +47,17 @@
     text-decoration: none;
     font-weight: bold;
     font-size: 2em;
-    text-shadow: 0 0 10px #ff0000,
-                 0 0 20px #ff0000;
+    text-shadow:
+      0 0 10px #ff0000,
+      0 0 20px #ff0000;
     transition: all 0.3s ease;
   }
 
   .neon-box a:hover {
     color: #ffffff;
-    text-shadow: 0 0 15px #ffffff,
-                 0 0 30px #ffffff;
+    text-shadow:
+      0 0 15px #ffffff,
+      0 0 30px #ffffff;
   }
 
   canvas {
@@ -84,43 +87,52 @@
     background-color: rgba(0, 0, 0, 0.5);
     color: #fff;
     outline: none;
-    box-shadow: 0 0 20px #ff0000,
-                0 0 40px #ff0000 inset,
-                0 0 60px #ff0000;
+    box-shadow:
+      0 0 20px #ff0000,
+      0 0 40px #ff0000 inset,
+      0 0 60px #ff0000;
     transition: all 0.3s ease;
     width: 50%;
   }
 
   .neon-search:focus {
-    box-shadow: 0 0 25px #ff0000,
-                0 0 50px #ff0000 inset,
-                0 0 70px #ff0000;
-  }
-
-  /* Hidden YouTube player */
-  .bg-music {
-    position: absolute;
-    width: 0;
-    height: 0;
-    opacity: 0;
+    box-shadow:
+      0 0 25px #ff0000,
+      0 0 50px #ff0000 inset,
+      0 0 70px #ff0000;
   }
 
   /* Play button */
   #playMusic {
     position: fixed;
-    bottom: 50px;
+    bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    padding: 20px 40px;
+    padding: 15px 40px;
     font-size: 1.5em;
+    border: 3px solid #ff0000;
     background: black;
     color: #ff0000;
-    border: 3px solid #ff0000;
-    border-radius: 12px;
     cursor: pointer;
-    text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
-    box-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000 inset;
+    border-radius: 10px;
+    box-shadow:
+      0 0 10px #ff0000,
+      0 0 20px #ff0000,
+      0 0 40px #ff0000;
     z-index: 20;
+  }
+  #playMusic:hover {
+    color: #fff;
+    box-shadow:
+      0 0 15px #ffffff,
+      0 0 30px #ffffff;
+  }
+
+  /* Hide YouTube iframe */
+  .bg-music {
+    width: 0;
+    height: 0;
+    border: none;
   }
 </style>
 </head>
@@ -144,15 +156,18 @@
 <!-- Play Music Button -->
 <button id="playMusic">🎵 Play Music</button>
 
-<!-- YouTube hidden player -->
+<!-- Hidden YouTube iframe -->
 <iframe id="ytplayer" class="bg-music"
   src="https://www.youtube.com/embed/ivPEtR70_Fg?enablejsapi=1&loop=1&playlist=ivPEtR70_Fg"
-  frameborder="0" allow="autoplay"></iframe>
+  frameborder="0"
+  allow="autoplay">
+</iframe>
 
 <script>
   // Snow falling effect
   const canvas = document.getElementById('snow');
   const ctx = canvas.getContext('2d');
+
   let particlesArray;
 
   function resizeCanvas() {
@@ -163,7 +178,9 @@
   resizeCanvas();
 
   class Snowflake {
-    constructor() { this.reset(); }
+    constructor() {
+      this.reset();
+    }
     reset() {
       this.x = Math.random() * canvas.width;
       this.y = Math.random() * -canvas.height;
@@ -173,9 +190,10 @@
       this.opacity = Math.random() * 0.5 + 0.5;
     }
     update() {
-      this.y += this.speedY; this.x += this.speedX;
-      if (this.y > canvas.height) { this.y = -this.size; this.x = Math.random() * canvas.width; }
-      if (this.x > canvas.width || this.x < 0) { this.x = Math.random() * canvas.width; }
+      this.y += this.speedY;
+      this.x += this.speedX;
+      if (this.y > canvas.height) this.reset();
+      if (this.x > canvas.width || this.x < 0) this.reset();
     }
     draw() {
       ctx.globalAlpha = this.opacity;
@@ -189,22 +207,29 @@
 
   function init() {
     particlesArray = [];
-    for (let i = 0; i < 250; i++) { particlesArray.push(new Snowflake()); }
+    for (let i = 0; i < 250; i++) {
+      particlesArray.push(new Snowflake());
+    }
   }
 
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let particle of particlesArray) { particle.update(); particle.draw(); }
+    for (let particle of particlesArray) {
+      particle.update();
+      particle.draw();
+    }
     requestAnimationFrame(animate);
   }
 
-  init(); animate();
+  init();
+  animate();
 
-  // Music button logic
-  document.getElementById("playMusic").addEventListener("click", function() {
-    let player = document.getElementById("ytplayer").contentWindow;
-    player.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-    this.style.display = "none"; // Hide button after click
+  // YouTube player control
+  const playButton = document.getElementById("playMusic");
+  playButton.addEventListener("click", function () {
+    const player = document.getElementById("ytplayer").contentWindow;
+    player.postMessage('{"event":"command","func":"playVideo","args":""}', "*");
+    playButton.style.display = "none";
   });
 </script>
 
